@@ -14,6 +14,10 @@ export class Buffer {
     buf.put(arr);
     return buf;
   }
+  public clear() {
+    this._internal = new Uint8Array(this._internal.byteLength);
+    this._cursor = 0;
+  }
   public reserve(size: number) {
     const temp = this._internal.slice(0, this._cursor);
     this._internal = new Uint8Array(this._internal.byteLength + size);

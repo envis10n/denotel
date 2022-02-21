@@ -18,6 +18,7 @@ export enum Negotiation {
   SEND = 1,
   /** Go Ahead */
   GA = 249,
+  EOR = 239,
 }
 
 export enum Option {
