@@ -1,5 +1,6 @@
 import { TelnetParser } from "../mod.ts";
 import { assertEquals } from "https://deno.land/std@0.126.0/testing/asserts.ts";
+import { parseEvent } from "../events.ts";
 
 Deno.test("parser", () => {
   const encoder = new TextEncoder();
@@ -19,6 +20,6 @@ Deno.test("parser", () => {
       255,
       249,
     ]),
-  ];
+  ].map((e) => parseEvent(e));
   assertEquals(b, expected);
 });
