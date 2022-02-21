@@ -3,6 +3,11 @@ import { Buffer } from "../lib/buffer.ts";
 
 Deno.test("buffer", () => {
   const a = new Buffer(16);
+  const a2 = new Buffer(16);
+  a2.put([1, 2, 3, 4, 5]);
+  const a3 = a2.split();
+  _assert.assertEquals(a2.capacity, 11);
+  _assert.assertEquals(a3.capacity, 5);
   _assert.assertEquals(a.capacity, 16);
   _assert.assertEquals(a.length, 0);
   a.put([1, 2, 3, 4, 5]);
