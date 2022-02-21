@@ -1,3 +1,4 @@
+/** Telnet Negotiation Constants */
 export enum Negotiation {
   /** Mark the start of a negotiation sequence. */
   IAC = 255,
@@ -21,6 +22,7 @@ export enum Negotiation {
   EOR = 239,
 }
 
+/** Telnet Option Constants */
 export enum Option {
   /** Whether the other side should interpret data as 8-bit characters instead of standard NVT ASCII.  */
   BINARY_TRANSMISSION = 0,

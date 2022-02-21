@@ -7,4 +7,3 @@
 export * from "./parser.ts";
 export * from "./events.ts";
 export * from "./telnet.ts";
-export * from "./lib/buffer.ts";

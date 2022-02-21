@@ -1,5 +1,8 @@
 import * as telnet from "./telnet.ts";
 
+/**
+ * A type describing the contained event data.
+ */
 export enum EventType {
   Normal,
   IAC,
@@ -7,6 +10,11 @@ export enum EventType {
   Subnegotation,
 }
 
+/**
+ * Parse a buffer into a usable event object.
+ * @param src The source buffer.
+ * @returns A parsed event.
+ */
 export function parseEvent(src: Uint8Array): TelnetEvent {
   if (src[0] == 255) {
     // IAC
@@ -40,32 +48,50 @@ export function parseEvent(src: Uint8Array): TelnetEvent {
   }
 }
 
+/**
+ * An object representing a telnet event.
+ */
 export type TelnetEvent =
   | TelnetEventMessage
   | TelnetEventIAC
   | TelnetEventNegotiation
   | TelnetEventSubnegotiation;
 
+/**
+ * A base description of a telnet event.
+ */
 export interface TelnetEventBase {
   type: EventType;
   buffer: Uint8Array;
 }
 
+/**
+ * A telnet event that contains no control sequence.
+ */
 export type TelnetEventMessage = {
   type: EventType.Normal;
 } & TelnetEventBase;
 
+/**
+ * A telnet control sequence with no option.
+ */
 export type TelnetEventIAC = {
   type: EventType.IAC;
   command: telnet.Negotiation;
 } & TelnetEventBase;
 
+/**
+ * A telnet control sequence negotiation.
+ */
 export type TelnetEventNegotiation = {
   type: EventType.Negotiation;
   option: telnet.Option;
   command: telnet.Negotiation;
 } & TelnetEventBase;
 
+/**
+ * A telnet control sequence with out-of-band subnegotiation data.
+ */
 export type TelnetEventSubnegotiation = {
   type: EventType.Subnegotation;
   option: telnet.Option;
