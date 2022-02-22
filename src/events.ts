@@ -1,4 +1,5 @@
 import * as telnet from "./telnet.ts";
+import { escapeIAC, unescapeIAC } from "../mod.ts";
 
 /**
  * A type describing the contained event data.
@@ -60,7 +61,8 @@ export function buildSubNeg(
     buffer: new Uint8Array([
       255,
       telnet.Negotiation.SB,
-      ...data,
+      option,
+      ...escapeIAC(data),
       255,
       telnet.Negotiation.SE,
     ]),
@@ -125,7 +127,7 @@ export function parseEvent(src: Uint8Array): TelnetEvent {
       return {
         type: EventType.Subnegotation,
         option: src[2] as telnet.Option,
-        data: src.slice(3, src.byteLength - 2),
+        data: unescapeIAC(src.slice(3, src.byteLength - 2)),
         buffer: src,
       };
     }

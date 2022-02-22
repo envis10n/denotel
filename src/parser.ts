@@ -49,8 +49,9 @@ export class TelnetParser {
     return this._compat;
   }
   private _internal_buffer: Buffer;
-  constructor(public readonly bufferSize: number = 128) {
+  constructor(public readonly bufferSize: number = 128, table?: CompatTable) {
     this._internal_buffer = new Buffer(this.bufferSize);
+    if (table != undefined) this._compat = table;
   }
   /**
    * Clone this parser's compatibility table.

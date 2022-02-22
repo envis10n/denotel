@@ -1,9 +1,8 @@
 import { assertEquals } from "https://deno.land/std@0.126.0/testing/asserts.ts";
-import { EventType } from "../events.ts";
-import { TelnetParser } from "../mod.ts";
+import { EventType, buildGMCP } from "../events.ts";
+import { TelnetParser } from "../../mod.ts";
 
 const utf8 = new TextEncoder();
-const utf8dec = new TextDecoder();
 
 Deno.test("event parse", () => {
   const parser = new TelnetParser();
@@ -23,31 +22,7 @@ Deno.test("event parse", () => {
     249,
   ]);
   const packets = parser.receive(input_data);
-  assertEquals(packets.length, 5);
-  for (const event of packets) {
-    switch (event.type) {
-      case EventType.Normal:
-        console.log("Text:", utf8dec.decode(event.buffer));
-        break;
-      case EventType.IAC:
-        console.log("IAC Command:", event.command);
-        break;
-      case EventType.Negotiation:
-        console.log(
-          "Negotiation Command:",
-          event.command,
-          "Option:",
-          event.option,
-        );
-        break;
-      case EventType.Subnegotation:
-        console.log(
-          "Subnegotiation Option:",
-          event.option,
-          "Data:",
-          utf8dec.decode(event.data),
-        );
-        break;
-    }
-  }
+  assertEquals(packets.length, 6);
+  const subneg = new Uint8Array([255, 250, 201, ...new TextEncoder().encode("Core.Hello {}"), 255, 240]);
+  assertEquals(buildGMCP("Core.Hello", {}).buffer, subneg);
 });

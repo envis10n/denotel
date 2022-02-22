@@ -101,6 +101,15 @@ async function client() {
       // Send events must go out.
       if (event.type == EventType.Send) {
         await conn.write(event.buffer);
+        if (event.buffer[1] == Negotiation.DO && event.buffer[2] == Option.GMCP) {
+          // Responding to GMCP enable.
+          await conn.write(
+            buildGMCP("Core.Hello", {
+              version: "0.1.6",
+              client: "DenoTel (Deno)",
+            }).buffer,
+          );
+        }
       }
 
       if (event.type == EventType.IAC && event.command == Negotiation.GA) {
@@ -113,12 +122,6 @@ async function client() {
       } else if (event.type == EventType.Negotiation) {
         if (event.option == Option.GMCP && event.command == Negotiation.WILL) {
           TELNET_GMCP = true;
-          await conn.write(
-            buildGMCP("Core.Hello", {
-              version: "0.1.0",
-              client: "DenoTel (Deno)",
-            }).buffer,
-          );
         }
       } else if (event.type == EventType.Subnegotation) {
         if (event.option == Option.GMCP) {
