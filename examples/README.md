@@ -8,7 +8,7 @@ The client example is a fairly simple MUD client with very basic GMCP support.
 
 To try this, run:
 
-`deno run --allow-net --allow-write https://raw.githubusercontent.com/envis10n/denotel/main/examples/client.ts <host> <port>`
+`deno run --allow-net https://raw.githubusercontent.com/envis10n/denotel/main/examples/client.ts <host> <port>`
 
 - <host> The hostname or IP address of the server.
 - <port> The port for the server.
