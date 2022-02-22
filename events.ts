@@ -6,6 +6,7 @@ import * as telnet from "./telnet.ts";
 export enum EventType {
   Normal,
   IAC,
+  Send,
   Negotiation,
   Subnegotation,
 }
@@ -51,7 +52,7 @@ export function parseEvent(src: Uint8Array): TelnetEvent {
 /**
  * An object representing a telnet event.
  */
-export type TelnetEvent =
+export type TelnetEvent = TelnetEventSend
   | TelnetEventMessage
   | TelnetEventIAC
   | TelnetEventNegotiation
@@ -64,6 +65,10 @@ export interface TelnetEventBase {
   type: EventType;
   buffer: Uint8Array;
 }
+
+export type TelnetEventSend = {
+  type: EventType.Send;
+} & TelnetEventBase;
 
 /**
  * A telnet event that contains no control sequence.

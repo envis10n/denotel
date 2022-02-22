@@ -40,6 +40,12 @@ export class TelnetParser {
   constructor(public readonly bufferSize: number = 128) {
     this._internal_buffer = new Buffer(this.bufferSize);
   }
+  public send(data: string): Uint8Array;
+  public send(data: Uint8Array): Uint8Array;
+  public send(data: string | Uint8Array): Uint8Array {
+    if (typeof data == "string") data = (new TextEncoder()).encode(data);
+    return escapeIAC(data);
+  }
   /**
    * Receive bytes from one end of a connection and process them for the other side.
    * 
