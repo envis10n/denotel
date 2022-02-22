@@ -4,6 +4,6 @@
  * A telnet parser library for Deno.
  */
 
-export * from "./parser.ts";
-export * from "./events.ts";
-export * from "./telnet.ts";
+export * from "./src/parser.ts";
+export * from "./src/events.ts";
+export * from "./src/telnet.ts";

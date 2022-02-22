@@ -1,4 +1,4 @@
-import { TelnetParser } from "../mod.ts";
+import { TelnetParser } from "../../mod.ts";
 import { assertEquals } from "https://deno.land/std@0.126.0/testing/asserts.ts";
 import { parseEvent } from "../events.ts";
 
