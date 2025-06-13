@@ -1,7 +1,23 @@
 {
+    "name": "@envis10n/denotel",
+    "version": "0.2.0",
+    "license": "MIT",
+    "exports": "./mod.ts",
     "fmt": {
-        "files": {
-            "include": ["src/"]
-        }
+        "indentWidth": 4,
+        "semiColons": true,
+        "include": [
+            "src/**/*.ts",
+            "src/**/*.js"
+        ]
+    },
+    "test": {
+        "include": [
+            "**/*.test.ts"
+        ]
+    },
+    "imports": {
+        "@envis10n/denobytes": "jsr:@envis10n/denobytes@^0.2.2",
+        "@std/assert": "jsr:@std/assert@^1.0.13"
     }
 }

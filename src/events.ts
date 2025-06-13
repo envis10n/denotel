@@ -5,11 +5,11 @@ import { escapeIAC, unescapeIAC } from "../mod.ts";
  * A type describing the contained event data.
  */
 export enum EventType {
-  Normal,
-  IAC,
-  Send,
-  Negotiation,
-  Subnegotation,
+    Normal,
+    IAC,
+    Send,
+    Negotiation,
+    Subnegotation,
 }
 
 /**
@@ -18,11 +18,11 @@ export enum EventType {
  * @returns A TelnetEventIAC.
  */
 export function buildIAC(command: telnet.Negotiation): TelnetEvent {
-  return {
-    type: EventType.IAC,
-    command,
-    buffer: new Uint8Array([255, command]),
-  };
+    return {
+        type: EventType.IAC,
+        command,
+        buffer: new Uint8Array([255, command]),
+    };
 }
 
 /**
@@ -32,15 +32,15 @@ export function buildIAC(command: telnet.Negotiation): TelnetEvent {
  * @returns A TelnetEventNegotiation.
  */
 export function buildNeg(
-  command: telnet.Negotiation,
-  option: telnet.Option,
+    command: telnet.Negotiation,
+    option: telnet.Option,
 ): TelnetEvent {
-  return {
-    type: EventType.Negotiation,
-    command,
-    option,
-    buffer: new Uint8Array([255, command, option]),
-  };
+    return {
+        type: EventType.Negotiation,
+        command,
+        option,
+        buffer: new Uint8Array([255, command, option]),
+    };
 }
 
 /**
@@ -50,23 +50,23 @@ export function buildNeg(
  * @returns A TelnetEventSubnegotiation.
  */
 export function buildSubNeg(
-  option: telnet.Option,
-  data: Uint8Array | string,
+    option: telnet.Option,
+    data: Uint8Array | string,
 ): TelnetEvent {
-  if (typeof data == "string") data = (new TextEncoder()).encode(data);
-  return {
-    type: EventType.Subnegotation,
-    option,
-    data: data.slice(),
-    buffer: new Uint8Array([
-      255,
-      telnet.Negotiation.SB,
-      option,
-      ...escapeIAC(data),
-      255,
-      telnet.Negotiation.SE,
-    ]),
-  };
+    if (typeof data == "string") data = (new TextEncoder()).encode(data);
+    return {
+        type: EventType.Subnegotation,
+        option,
+        data: data.slice(),
+        buffer: new Uint8Array([
+            255,
+            telnet.Negotiation.SB,
+            option,
+            ...escapeIAC(data),
+            255,
+            telnet.Negotiation.SE,
+        ]),
+    };
 }
 
 /**
@@ -75,14 +75,14 @@ export function buildSubNeg(
  * @returns A TelnetEventSend.
  */
 export function buildSend(
-  data: Uint8Array | string | TelnetEvent,
+    data: Uint8Array | string | TelnetEvent,
 ): TelnetEvent {
-  if (typeof data == "string") data = (new TextEncoder()).encode(data);
-  else if (!(data instanceof Uint8Array)) data = data.buffer;
-  return {
-    type: EventType.Send,
-    buffer: data.slice(),
-  };
+    if (typeof data == "string") data = (new TextEncoder()).encode(data);
+    else if (!(data instanceof Uint8Array)) data = data.buffer;
+    return {
+        type: EventType.Send,
+        buffer: data.slice(),
+    };
 }
 
 /**
@@ -92,13 +92,13 @@ export function buildSend(
  * @returns A TelnetEventSubnegotiation.
  */
 export function buildGMCP(
-  namespace: string,
-  payload: { [key: string]: any },
+    namespace: string,
+    payload: { [key: string]: any },
 ): TelnetEvent {
-  const data = (new TextEncoder()).encode(
-    `${namespace} ${JSON.stringify(payload)}`,
-  );
-  return buildSubNeg(telnet.Option.GMCP, data);
+    const data = (new TextEncoder()).encode(
+        `${namespace} ${JSON.stringify(payload)}`,
+    );
+    return buildSubNeg(telnet.Option.GMCP, data);
 }
 
 /**
@@ -107,92 +107,92 @@ export function buildGMCP(
  * @returns A parsed event.
  */
 export function parseEvent(src: Uint8Array): TelnetEvent {
-  if (src[0] == 255) {
-    // IAC
-    if (src.byteLength == 2) {
-      // Non-negotiation
-      return {
-        type: EventType.IAC,
-        command: src[1] as telnet.Negotiation,
-        buffer: src,
-      };
-    } else if (src.byteLength == 3) {
-      return {
-        type: EventType.Negotiation,
-        command: src[1] as telnet.Negotiation,
-        option: src[2] as telnet.Option,
-        buffer: src,
-      };
+    if (src[0] == 255) {
+        // IAC
+        if (src.byteLength == 2) {
+            // Non-negotiation
+            return {
+                type: EventType.IAC,
+                command: src[1] as telnet.Negotiation,
+                buffer: src,
+            };
+        } else if (src.byteLength == 3) {
+            return {
+                type: EventType.Negotiation,
+                command: src[1] as telnet.Negotiation,
+                option: src[2] as telnet.Option,
+                buffer: src,
+            };
+        } else {
+            return {
+                type: EventType.Subnegotation,
+                option: src[2] as telnet.Option,
+                data: unescapeIAC(src.slice(3, src.byteLength - 2)),
+                buffer: src,
+            };
+        }
     } else {
-      return {
-        type: EventType.Subnegotation,
-        option: src[2] as telnet.Option,
-        data: unescapeIAC(src.slice(3, src.byteLength - 2)),
-        buffer: src,
-      };
+        return {
+            type: EventType.Normal,
+            buffer: src,
+        };
     }
-  } else {
-    return {
-      type: EventType.Normal,
-      buffer: src,
-    };
-  }
 }
 
 /**
  * An object representing a telnet event.
  */
 export type TelnetEvent =
-  | TelnetEventSend
-  | TelnetEventMessage
-  | TelnetEventIAC
-  | TelnetEventNegotiation
-  | TelnetEventSubnegotiation;
+    | TelnetEventSend
+    | TelnetEventMessage
+    | TelnetEventIAC
+    | TelnetEventNegotiation
+    | TelnetEventSubnegotiation;
 
 /**
  * A base description of a telnet event.
  */
 export interface TelnetEventBase {
-  type: EventType;
-  buffer: Uint8Array;
+    type: EventType;
+    buffer: Uint8Array;
 }
 
 /**
  * A wrapper event for other event types. To be sent to the remote end.
  */
 export type TelnetEventSend = {
-  type: EventType.Send;
+    type: EventType.Send;
 } & TelnetEventBase;
 
 /**
  * A telnet event that contains no control sequence.
  */
 export type TelnetEventMessage = {
-  type: EventType.Normal;
+    type: EventType.Normal;
 } & TelnetEventBase;
 
 /**
  * A telnet control sequence with no option.
  */
 export type TelnetEventIAC = {
-  type: EventType.IAC;
-  command: telnet.Negotiation;
+    type: EventType.IAC;
+    command: telnet.Negotiation;
 } & TelnetEventBase;
 
 /**
  * A telnet control sequence negotiation.
  */
 export type TelnetEventNegotiation = {
-  type: EventType.Negotiation;
-  option: telnet.Option;
-  command: telnet.Negotiation;
+    type: EventType.Negotiation;
+    option: telnet.Option;
+    command: telnet.Negotiation;
 } & TelnetEventBase;
 
 /**
  * A telnet control sequence with out-of-band subnegotiation data.
  */
 export type TelnetEventSubnegotiation = {
-  type: EventType.Subnegotation;
-  option: telnet.Option;
-  data: Uint8Array;
+    type: EventType.Subnegotation;
+    option: telnet.Option;
+    data: Uint8Array;
 } & TelnetEventBase;
