@@ -32,7 +32,7 @@ export const COMPAT_REMOTE: CompatEntry = CompatEntry.REMOTE |
 /**
  * Factory for Bitflags<CompatEntry>.
  */
-export const BCompatFlags = Bitflags.factory<CompatEntry>();
+export const BCompatFlags: (value?: CompatEntry | undefined) => Bitflags<CompatEntry> = Bitflags.factory<CompatEntry>();
 
 /**
  * Type alias for Bitflags<CompatEntry>.
@@ -133,7 +133,7 @@ export class Compatibility {
  * Telnet compatibility options table.
  */
 export class CompatTable {
-    public table = new Uint8Array(256);
+    public table: Uint8Array = new Uint8Array(256);
     constructor();
     constructor(config: CompatConf[]);
     constructor(config?: CompatConf[]) {
